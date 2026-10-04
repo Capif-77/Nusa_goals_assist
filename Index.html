@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antonio Nusa : buts et passes décisives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#14213d;--muted:#5b6578;--line:#dde2ec;--red:#ba0c2f;--onred:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1626;--card:#16213a;--ink:#eef1f7;--muted:#9aa6bd;--line:#26334f;--red:#e5334f}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.5 Barlow,system-ui,sans-serif}
+h1,h2{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;margin:0;line-height:1}
+.hero{padding:4rem 1.25rem 2.5rem;max-width:42rem;margin:0 auto}
+.hero p{margin:0 0 .75rem;color:var(--muted);font-size:1.125rem}
+.hero h1{font-size:clamp(3.5rem,16vw,6.5rem);letter-spacing:-.01em}
+.hero h1 span{display:block;color:var(--red)}
+.tabs{display:flex;gap:.75rem;margin-top:2rem}
+.tabs button{flex:1;font:600 1.5rem "Barlow Condensed","Arial Narrow",sans-serif;padding:.9rem 1rem;border-radius:.75rem;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--red);border-color:var(--red);color:var(--onred)}
+.tabs button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+main{max-width:42rem;margin:0 auto;padding:0 1.25rem 4rem}
+h2{font-size:2rem;margin:0 0 1rem}
+h3{font:700 1.75rem "Barlow Condensed","Arial Narrow",sans-serif;margin:2.25rem 0 .9rem;padding-bottom:.4rem;border-bottom:2px solid var(--red)}
+.list{display:grid;gap:.6rem}
+.club{border-bottom:2px solid var(--red);margin-top:1.5rem}
+details>summary{list-style:none;cursor:pointer}
+details>summary::-webkit-details-marker{display:none}
+.club>summary{display:flex;align-items:center;gap:.75rem;padding:.4rem 0}
+.club>summary h3{margin:0;padding:0;border:0;flex:1}
+.club>summary .count{color:var(--muted);font-size:.95rem}
+.club>summary::after{content:"+";font:700 1.9rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--red);width:1.5rem;text-align:center}
+.club[open]>summary::after{content:"\2212"}
+.club>summary:focus-visible,.card>summary:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.club .list{margin:.5rem 0 1.25rem}
+.club .empty{margin:.5rem 0 1.25rem}
+.card{padding:.7rem 1.1rem}
+.card>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 1rem}
+.card>summary .vs{flex:1;font-size:1.3rem}
+.card>summary .min{font-size:1.3rem}
+.card>summary .date{flex-basis:100%;color:var(--muted);font-size:.9rem}
+.card .body{margin-top:.75rem}
+.card .yt{display:inline-block;margin-top:.6rem;color:var(--red);font-size:.95rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:.75rem;padding:1.1rem 1.25rem}
+.card .top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.card .vs{font:700 1.5rem "Barlow Condensed","Arial Narrow",sans-serif}
+.card .min{font:700 1.5rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--red);white-space:nowrap}
+.card .meta{color:var(--muted);margin:.25rem 0 .75rem}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chips span{border:1px solid var(--line);border-radius:.5rem;padding:.15rem .6rem;font-size:.9rem}
+.video{margin-top:1rem;aspect-ratio:16/9;border-radius:.5rem;overflow:hidden;background:#000}
+.video iframe{width:100%;height:100%;border:0}
+.empty{color:var(--muted)}
+[hidden]{display:none}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}.card:hover{border-color:var(--red)}}
+.tabs{flex-wrap:wrap}
+.tabs button{flex:1 1 6.5rem}
+.rang{list-style:none;margin:.5rem 0 1.25rem;padding:0;display:grid;gap:.5rem}
+.rang li{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;background:var(--card);border:1px solid var(--line);border-radius:.75rem;padding:.6rem 1.1rem}
+.rang .n{font:700 1.4rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--red);white-space:nowrap}
+.sub{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0 .75rem}
+.sub button{font:600 1.2rem "Barlow Condensed","Arial Narrow",sans-serif;padding:.35rem .95rem;border-radius:2rem;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.sub button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--onred)}
+.sub button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <p>Bonjour et bienvenue !</p>
+  <h1>Antonio<span>Nusa</span></h1>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t-buts" aria-selected="true" aria-controls="p-buts">Buts</button>
+    <button role="tab" id="t-passes" aria-selected="false" aria-controls="p-passes">Passes D</button>
+    <button role="tab" id="t-stats" aria-selected="false" aria-controls="p-stats">Stats</button>
+  </div>
+</header>
+
+<main>
+  <section id="p-buts" role="tabpanel" aria-labelledby="t-buts">
+    <h2>Tous ses buts</h2>
+    <div class="list" id="l-buts"></div>
+  </section>
+  <section id="p-passes" role="tabpanel" aria-labelledby="t-passes" hidden>
+    <h2>Toutes ses passes décisives</h2>
+    <div class="list" id="l-passes"></div>
+  </section>
+  <section id="p-stats" role="tabpanel" aria-labelledby="t-stats" hidden>
+    <h2>Stats</h2>
+    <div id="l-stats"></div>
+  </section>
+</main>
+
+<script>
+/* ============================================================
+   TES DONNÉES : c'est ici que tu modifies / ajoutes des lignes.
+   Copie un bloc { ... } entre accolades, sépare-les par une virgule.
+   - club : "Stabæk", "Club Brugge" ou "RB Leipzig" (le club où il jouait ce jour-là)
+   - competition : "Eliteserien" (Stabæk), "Pro League" (Bruges), "Bundesliga" (Leipzig)...
+   - passeur : (pour les buts, facultatif) celui qui a donné la passe
+   - date : AAAA-MM-JJ
+   - pied : "droit", "gauche" ou "tête"
+   - xg / xgot : mets null si tu ne les as pas
+   - video : { id: "ID_YOUTUBE", debut: 12, fin: 25 }  (secondes, facultatif)
+             ou null tant que tu n'as pas la vidéo
+   L'ID YouTube, c'est la fin du lien : youtube.com/watch?v=ICI
+   Les lignes ci-dessous sont des EXEMPLES à remplacer.
+   ============================================================ */
+const clubs = ["Stabæk", "Club Brugge", "RB Leipzig"];
+
+const buts = [
+  { club: "Stabæk", competition: "Eliteserien", adversaire: "Bodø/Glimt", date: "2021-06-27", minute: 81, pied: "droit", passeur: "Uche Sabastine", xg: null, xgot: null, video: { id: "RIvW4-nPAXo", debut: 239, fin: 259 } },
+  { club: "Stabæk", competition: "Eliteserien", adversaire: "Viking", date: "2021-06-30", minute: 26, pied: "gauche", passeur: "Kornelius Normann", xg: null, xgot: null, video: { id: "Ro9w6ty4RfU", debut: 30, fin: 45 } },
+  { club: "Stabæk", competition: "Eliteserien", adversaire: "Viking", date: "2021-06-30", minute: 67, pied: "gauche", xg: null, xgot: null, video: { id: "Ro9w6ty4RfU", debut: 118, fin: 131 } },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Union Saint-Gilloise", date: "2022-05-08", minute: 98, pied: "droit", passeur: "Andreas Skov Olsen", xg: null, xgot: null, video: { id: "8PnzssL-XqE", debut: 245, fin: 290 } },
+  { club: "Club Brugge", competition: "Ligue des champions", adversaire: "FC Porto", date: "2022-09-13", minute: 89, pied: "droit", passeur: "Casper Nielsen", xg: 0.26, xgot: 0.85, video: { id: "SsH3dQ1ADuc", debut: 88, fin: 108 } }
+];
+
+const passes = [
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Cercle Brugge", date: "2022-09-02", minute: 67, pied: "gauche", buteur: "Casper Nielsen", xg: null, xgot: null, video: { id: "MBXXP-PqFYM", debut: 212, fin: 240 } }
+];
+/* ============================================================ */
+
+const fmt = n => String(n).replace(".", ",");
+const jour = d => new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
+function videoHtml(v) {
+  if (!v || !v.id) return "";
+  let q = "rel=0";
+  if (v.debut) q += "&start=" + v.debut;
+  if (v.fin) q += "&end=" + v.fin;
+  const lien = "https://www.youtube.com/watch?v=" + v.id + (v.debut ? "&t=" + v.debut + "s" : "");
+  return '<div class="video"><iframe src="https://www.youtube.com/embed/' + v.id + "?" + q +
+    '" title="Vidéo de l\'action" loading="lazy" allowfullscreen></iframe></div>' +
+    '<a class="yt" href="' + lien + '" target="_blank" rel="noopener">Ouvrir la vidéo sur YouTube</a>';
+}
+
+function numero(e, items) {
+  const memes = items.filter(x => x.adversaire === e.adversaire && x.date === e.date);
+  return memes.length > 1 ? memes.indexOf(e) + 1 : 0;
+}
+
+function carte(e, passe, num) {
+  const chips = [];
+  if (e.pied) chips.push("Pied : " + e.pied);
+  if (passe && e.buteur) chips.push("Buteur : " + e.buteur);
+  if (!passe && e.passeur) chips.push("Passeur : " + e.passeur);
+  if (e.xg != null) chips.push("xG " + fmt(e.xg));
+  if (e.xgot != null) chips.push("xGOT " + fmt(e.xgot));
+  return '<details class="card"><summary><span class="vs">vs ' + e.adversaire + (num ? " #" + num : "") + '</span>' +
+    (e.minute != null ? '<span class="min">' + e.minute + "’</span>" : "") +
+    '<span class="date">' + jour(e.date) + (e.competition ? ", " + e.competition : "") + "</span></summary>" +
+    '<div class="body"><div class="chips">' + chips.map(c => "<span>" + c + "</span>").join("") + "</div>" +
+    videoHtml(e.video) + "</div></details>";
+}
+
+function remplir(id, liste, passe) {
+  document.getElementById(id).innerHTML = clubs.map(c => {
+    const items = liste.filter(e => e.club === c);
+    return '<details class="club"><summary><h3>' + c + '</h3><span class="count">' + items.length + "</span></summary>" +
+      (items.length
+        ? '<div class="list">' + items.map(e => carte(e, passe, numero(e, items))).join("") + "</div>"
+        : '<p class="empty">Rien pour le moment.</p>') + "</details>";
+  }).join("");
+}
+remplir("l-buts", buts, false);
+remplir("l-passes", passes, true);
+
+/* ============================================================
+   STATS PAR COMPÉTITION : ajoute ou modifie des lignes ["Nom", valeur].
+   ============================================================ */
+const statsComp = {
+  "Championnat": [
+    ["Matchs joués", 133]
+  ],
+  "Ligue des champions": [
+    ["Matchs joués", 13],
+    ["Minutes jouées", 564],
+    ["Buts", 1],
+    ["Occasions créées", 14],
+    ["Grosses occasions créées", 1],
+    ["Dribbles réussis", 21]
+  ],
+  "Coupe": []
+};
+/* ============================================================ */
+
+function classement(liste, champ) {
+  const compte = {};
+  liste.forEach(x => { if (x[champ]) compte[x[champ]] = (compte[x[champ]] || 0) + 1; });
+  return Object.entries(compte).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr"));
+}
+
+function blocClassement(titre, rang) {
+  return '<details class="club"><summary><h3>' + titre + '</h3><span class="count">' +
+    rang.length + " joueur" + (rang.length > 1 ? "s" : "") + "</span></summary>" +
+    (rang.length
+      ? '<ul class="rang">' + rang.map(([nom, n]) =>
+          "<li><span>" + nom + '</span><span class="n">' + n + (n > 1 ? " passes" : " passe") + "</span></li>").join("") + "</ul>"
+      : '<p class="empty">Pas encore de données.</p>') + "</details>";
+}
+
+let compChoisie = Object.keys(statsComp).find(k => statsComp[k].length) || Object.keys(statsComp)[0];
+
+function panneauComp() {
+  const lignes = statsComp[compChoisie];
+  document.getElementById("comp-panel").innerHTML = lignes.length
+    ? '<ul class="rang">' + lignes.map(([nom, v]) =>
+        "<li><span>" + nom + '</span><span class="n">' + v + "</span></li>").join("") + "</ul>"
+    : '<p class="empty">Pas encore de données.</p>';
+  document.querySelectorAll("#l-stats [data-comp]").forEach(b =>
+    b.setAttribute("aria-pressed", b.dataset.comp === compChoisie));
+}
+
+function stats() {
+  document.getElementById("l-stats").innerHTML =
+    blocClassement("Qui il a le plus servi", classement(passes, "buteur")) +
+    blocClassement("Qui l'a le plus servi", classement(buts, "passeur")) +
+    '<details class="club"><summary><h3>Par compétition</h3></summary><div class="sub">' +
+    Object.keys(statsComp).map(n => '<button type="button" data-comp="' + n + '">' + n + "</button>").join("") +
+    '</div><div id="comp-panel"></div></details>';
+  document.querySelectorAll("#l-stats [data-comp]").forEach(b =>
+    b.onclick = () => { compChoisie = b.dataset.comp; panneauComp(); });
+  panneauComp();
+}
+stats();
+
+const onglets = { buts: ["t-buts", "p-buts"], passes: ["t-passes", "p-passes"], stats: ["t-stats", "p-stats"] };
+function montrer(nom) {
+  for (const k in onglets) {
+    const actif = k === nom;
+    document.getElementById(onglets[k][0]).setAttribute("aria-selected", actif);
+    document.getElementById(onglets[k][1]).hidden = !actif;
+  }
+}
+document.getElementById("t-buts").onclick = () => montrer("buts");
+document.getElementById("t-passes").onclick = () => montrer("passes");
+document.getElementById("t-stats").onclick = () => montrer("stats");
+</script>
+</body>
+</html>
