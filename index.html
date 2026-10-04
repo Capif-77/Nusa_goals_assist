@@ -64,6 +64,11 @@ details>summary::-webkit-details-marker{display:none}
 .sub button{font:600 1.2rem "Barlow Condensed","Arial Narrow",sans-serif;padding:.35rem .95rem;border-radius:2rem;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
 .sub button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--onred)}
 .sub button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.tot{color:var(--muted);font-size:1.5rem}
+.card>summary .no{color:var(--muted);font:700 1.1rem "Barlow Condensed","Arial Narrow",sans-serif}
+.card .empty{margin:.75rem 0 0}
+.rang.gaa li{align-items:center}
+.rang .sous{display:block;color:var(--muted);font-size:.9rem}
 </style>
 </head>
 <body>
@@ -80,11 +85,11 @@ details>summary::-webkit-details-marker{display:none}
 
 <main>
   <section id="p-buts" role="tabpanel" aria-labelledby="t-buts">
-    <h2>Tous ses buts</h2>
+    <h2>Tous ses buts <span class="tot" id="tot-buts"></span></h2>
     <div class="list" id="l-buts"></div>
   </section>
   <section id="p-passes" role="tabpanel" aria-labelledby="t-passes" hidden>
-    <h2>Toutes ses passes décisives</h2>
+    <h2>Toutes ses passes décisives <span class="tot" id="tot-passes"></span></h2>
     <div class="list" id="l-passes"></div>
   </section>
   <section id="p-stats" role="tabpanel" aria-labelledby="t-stats" hidden>
@@ -97,7 +102,7 @@ details>summary::-webkit-details-marker{display:none}
 /* ============================================================
    TES DONNÉES : c'est ici que tu modifies / ajoutes des lignes.
    Copie un bloc { ... } entre accolades, sépare-les par une virgule.
-   - club : "Stabæk", "Club Brugge" ou "RB Leipzig" (le club où il jouait ce jour-là)
+   - club : "Stabæk", "Club Brugge", "RB Leipzig", ou "Norvège" pour la sélection nationale
    - competition : "Eliteserien" (Stabæk), "Pro League" (Bruges), "Bundesliga" (Leipzig)...
    - passeur : (pour les buts, facultatif) celui qui a donné la passe
    - date : AAAA-MM-JJ
@@ -108,26 +113,86 @@ details>summary::-webkit-details-marker{display:none}
    L'ID YouTube, c'est la fin du lien : youtube.com/watch?v=ICI
    Les lignes ci-dessous sont des EXEMPLES à remplacer.
    ============================================================ */
-const clubs = ["Stabæk", "Club Brugge", "RB Leipzig"];
+const clubs = ["Stabæk", "Club Brugge", "RB Leipzig", "Norvège"];
 
 const buts = [
   { club: "Stabæk", competition: "Eliteserien", adversaire: "Bodø/Glimt", date: "2021-06-27", minute: 81, pied: "droit", passeur: "Uche Sabastine", xg: null, xgot: null, video: { id: "RIvW4-nPAXo", debut: 239, fin: 259 } },
   { club: "Stabæk", competition: "Eliteserien", adversaire: "Viking", date: "2021-06-30", minute: 26, pied: "gauche", passeur: "Kornelius Normann", xg: null, xgot: null, video: { id: "Ro9w6ty4RfU", debut: 30, fin: 45 } },
   { club: "Stabæk", competition: "Eliteserien", adversaire: "Viking", date: "2021-06-30", minute: 67, pied: "gauche", xg: null, xgot: null, video: { id: "Ro9w6ty4RfU", debut: 118, fin: 131 } },
   { club: "Club Brugge", competition: "Pro League", adversaire: "Union Saint-Gilloise", date: "2022-05-08", minute: 98, pied: "droit", passeur: "Andreas Skov Olsen", xg: null, xgot: null, video: { id: "8PnzssL-XqE", debut: 245, fin: 290 } },
-  { club: "Club Brugge", competition: "Ligue des champions", adversaire: "FC Porto", date: "2022-09-13", minute: 89, pied: "droit", passeur: "Casper Nielsen", xg: 0.26, xgot: 0.85, video: { id: "SsH3dQ1ADuc", debut: 88, fin: 108 } }
+  { club: "Club Brugge", competition: "Ligue des champions", adversaire: "FC Porto", date: "2022-09-13", minute: 89, pied: "droit", passeur: "Casper Nielsen", xg: 0.26, xgot: 0.85, video: { id: "SsH3dQ1ADuc", debut: 88, fin: 108 } },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "RFC Seraing", date: "2023-04-07", minute: 90, pied: "droit", passeur: "Andreas Skov Olsen", xg: null, xgot: null, video: { id: "PSstGbb4Ktc", debut: 179, fin: 227 } },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "RWDM", date: "2023-08-20", minute: 74, pied: "droit", xg: 0.30, xgot: 0.68, video: { id: "nPnJxHulmas", debut: 274, fin: 290 } },
+  { club: "Norvège", competition: "Match amical", adversaire: "Jordanie", date: "2023-09-07", minute: 11, pied: "droit", passeur: "Jørgen Strand Larsen", xg: null, xgot: null, video: { id: "BArP4oKuMFs", debut: 3, fin: 40 } },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Charleroi", date: "2023-09-16", minute: 87, pied: "droit", passeur: "Jorne Spileers", xg: 0.03, xgot: 0.53, video: { id: "llhVzNm9Va0", debut: 172, fin: 213 } },
+  { club: "Club Brugge", competition: "Conference League", adversaire: "Bodø/Glimt", date: "2023-12-14", minute: 26, pied: "gauche", passeur: "Andreas Skov Olsen", xg: 0.04, xgot: 0.14, video: null },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Westerlo", date: "2024-01-20", minute: 80, pied: "droit", passeur: "Hans Vanaken", xg: 0.93, xgot: 0.98, video: { id: "-wS9MeCBYTg", debut: 243, fin: 260 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "RW Essen", date: "2024-08-17", minute: 84, pied: "gauche", passeur: "Xavi Simons", xg: null, xgot: null, video: { id: "IYWY7ICaHq0", debut: 221, fin: 245 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "FC St. Pauli", date: "2024-10-29", minute: 80, pied: "droit", passeur: "Eljif Elmas", xg: null, xgot: null, video: { id: "CndSS0_H_OY", debut: 215, fin: 236 } },
+  { club: "Norvège", competition: "Ligue des nations", adversaire: "Slovénie", date: "2024-11-14", minute: 4, pied: "droit", xg: null, xgot: null, video: { id: "FsxGb48jpQw", debut: 12, fin: 44 } },
+  { club: "Norvège", competition: "Ligue des nations", adversaire: "Slovénie", date: "2024-11-14", minute: 59, pied: "droit", passeur: "Alexander Sørloth", xg: null, xgot: null, video: { id: "FsxGb48jpQw", debut: 200, fin: 235 } },
+  { club: "Norvège", competition: "Ligue des nations", adversaire: "Kazakhstan", date: "2024-11-17", minute: 76, pied: "droit", passeur: "Jørgen Strand Larsen", xg: null, xgot: null, video: { id: "KFGkFdkRoHQ", debut: 236, fin: 284 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hoffenheim", date: "2024-11-23", minute: 19, pied: "droit", passeur: "Loïs Openda", xg: null, xgot: null, video: { id: "BPOchSOXDOY", debut: 67, fin: 91 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Bochum", date: "2025-01-18", minute: 13, pied: "droit", xg: null, xgot: null, video: { id: "hLYzP_hQ8tU", debut: 60, fin: 87 } },
+  { club: "Norvège", competition: "Qualifs Coupe du monde", adversaire: "Italie", date: "2025-06-06", minute: 34, pied: "droit", passeur: "Morten Thorsby", xg: null, xgot: null, video: { id: "ARrn1qLwbBg", debut: 196, fin: 269 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Bochum", date: "2024-08-24", minute: 59, pied: "droit", xg: 0.10, xgot: 0.18, video: { id: "BDwkLTzMbHs", debut: 107, fin: 138 } },
+  { club: "Norvège", competition: "Match amical", adversaire: "Nouvelle-Zélande", date: "2025-10-14", minute: 62, pied: "droit", passeur: "Andreas Schjelderup", xg: null, xgot: null, video: { id: "7hibyDWn-T0", debut: 318, fin: 378 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Augsburg", date: "2025-10-25", minute: 22, pied: "droit", passeur: "Yan Diomandé", xg: null, xgot: null, video: { id: "OzEbuiiXCTs", debut: 54, fin: 73 } },
+  { club: "Norvège", competition: "Qualifs Coupe du monde", adversaire: "Italie", date: "2025-11-16", minute: 63, pied: "gauche", passeur: "Alexander Sørloth", xg: null, xgot: null, video: { id: "i5PyVv_zoCI", debut: 381, fin: 444 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "Magdeburg", date: "2025-12-02", minute: 19, pied: "droit", passeur: "Yan Diomandé", xg: null, xgot: null, video: { id: "0B6cj2OOM5o", debut: 76, fin: 92 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Heidenheim", date: "2026-01-24", minute: 68, pied: "droit", passeur: "Nicolas Seiwald", xg: 0.07, xgot: 0.11, video: { id: "6o4rg3OfCXU", debut: 124, fin: 146 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Werder Brême", date: "2026-04-04", minute: 15, pied: "droit", xg: 0.05, xgot: 0.44, video: { id: "Pj-6IwoAEOg", debut: 30, fin: 48 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Francfort", date: "2026-04-18", minute: 70, pied: "droit", passeur: "Max Finkgräfe", xg: 0.04, xgot: 0.05, video: { id: "IKtWgQIGv98", debut: 30, fin: 42 } },
+  { club: "Norvège", competition: "Match amical", adversaire: "Suède", date: "2026-06-01", minute: 18, pied: "droit", passeur: "Sander Berge", xg: null, xgot: null, video: { id: "k_Bxv0NHvgA", debut: 43, fin: 50 } },
+  { club: "Norvège", competition: "Coupe du monde", adversaire: "Côte d'Ivoire", date: "2026-06-30", minute: 39, pied: "droit", passeur: "Martin Ødegaard", xg: 0.02, xgot: 0.80, video: { id: "ATzmoebQMj0", debut: 18, fin: 34 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "Trier", date: "2026-08-22", minute: 92, pied: "droit", xg: 0.07, xgot: 0.66, video: { id: "BHiAezC73Eo", debut: 122, fin: 148 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Gladbach", date: "2026-08-29", minute: 49, pied: "droit", passeur: "Tidiam Gomis", xg: 0.10, xgot: 0.62, video: { id: "hP0-xSX3ba8", debut: 58, fin: 80 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2026-09-13", minute: 28, pied: "droit", xg: 0.09, xgot: 0.21, video: { id: "X_p818BPjZ8", debut: 38, fin: 64 } }
 ];
 
 const passes = [
-  { club: "Club Brugge", competition: "Pro League", adversaire: "Cercle Brugge", date: "2022-09-02", minute: 67, pied: "gauche", buteur: "Casper Nielsen", xg: null, xgot: null, video: { id: "MBXXP-PqFYM", debut: 212, fin: 240 } }
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Cercle Brugge", date: "2022-09-02", minute: 67, pied: "gauche", buteur: "Casper Nielsen", xg: null, xgot: null, video: { id: "MBXXP-PqFYM", debut: 212, fin: 240 } },
+  { club: "Club Brugge", competition: "Conference League", adversaire: "KA Akureyri", date: "2023-08-10", minute: 40, pied: "droit", buteur: "Hans Vanaken", xg: null, xgot: null, video: { id: "77zsC8WktCM", debut: 30, fin: 53 } },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "RWDM", date: "2023-08-20", minute: 19, pied: "gauche", buteur: "Andreas Skov Olsen", xg: null, xgot: null, video: { id: "nPnJxHulmas", debut: 133, fin: 177 } },
+  { club: "Norvège", competition: "Match amical", adversaire: "Jordanie", date: "2023-09-07", minute: 31, pied: "droit", buteur: "Jørgen Strand Larsen", xg: null, xgot: null, video: { id: "BArP4oKuMFs", debut: 105, fin: 144 } },
+  { club: "Norvège", competition: "Qualifs Euro", adversaire: "Géorgie", date: "2023-09-12", minute: 25, pied: "gauche", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "B22Gz_UwMoI", debut: 41, fin: 65 } },
+  { club: "Norvège", competition: "Qualifs Euro", adversaire: "Géorgie", date: "2023-09-12", minute: 33, pied: "droit", buteur: "Martin Ødegaard", xg: null, xgot: null, video: { id: "B22Gz_UwMoI", debut: 68, fin: 110 } },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Charleroi", date: "2023-09-16", minute: 95, pied: "droit", buteur: "Ferran Jutglà", xg: null, xgot: null, video: { id: "llhVzNm9Va0", debut: 240, fin: 277 } },
+  { club: "Norvège", competition: "Qualifs Euro", adversaire: "Chypre", date: "2023-10-12", minute: 72, pied: "gauche", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "v823RUea8pU", debut: 158, fin: 185 } },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Cercle Brugge", date: "2024-02-18", minute: 81, pied: "droit", buteur: "Ferran Jutglà", xg: null, xgot: null, video: { id: "HfYHpGiM02M", debut: 185, fin: 203 } },
+  { club: "Norvège", competition: "Match amical", adversaire: "Kosovo", date: "2024-06-05", minute: 70, pied: "droit", buteur: "Erling Haaland", xg: null, xgot: null, video: null },
+  { club: "Club Brugge", competition: "Pro League", adversaire: "Genk", date: "2024-08-11", minute: 45, pied: "droit", buteur: "Andreas Skov Olsen", xg: null, xgot: null, video: { id: "p3xHyy0UxRs", debut: 68, fin: 86 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Leverkusen", date: "2024-08-31", minute: 80, pied: "droit", buteur: "Loïs Openda", xg: null, xgot: null, video: { id: "CkxvLmp95C8", debut: 182, fin: 201 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Heidenheim", date: "2024-10-06", minute: 59, pied: "droit", buteur: "Loïs Openda", xg: null, xgot: null, video: { id: "R1QOudZ4ohY", debut: 23, fin: 35 } },
+  { club: "Norvège", competition: "Ligue des nations", adversaire: "Kazakhstan", date: "2024-11-17", minute: 37, pied: "droit", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "KFGkFdkRoHQ", debut: 55, fin: 92 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hoffenheim", date: "2024-11-23", minute: 15, pied: "droit", buteur: "Willi Orbán", xg: null, xgot: null, video: { id: "BPOchSOXDOY", debut: 0, fin: 30 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "Francfort", date: "2024-12-04", minute: 31, pied: "droit", buteur: "Benjamin Šeško", xg: null, xgot: null, video: { id: "TzCAKa-bDAk", debut: 64, fin: 90 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "Francfort", date: "2024-12-04", minute: 50, pied: "droit", buteur: "Loïs Openda", xg: null, xgot: null, video: { id: "TzCAKa-bDAk", debut: 100, fin: 120 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "Francfort", date: "2024-12-04", minute: 58, pied: "gauche", buteur: "Loïs Openda", xg: null, xgot: null, video: { id: "TzCAKa-bDAk", debut: 130, fin: 162 } },
+  { club: "Norvège", competition: "Qualifs Coupe du monde", adversaire: "Italie", date: "2025-06-06", minute: 14, pied: "droit", buteur: "Alexander Sørloth", xg: null, xgot: null, video: { id: "ARrn1qLwbBg", debut: 80, fin: 156 } },
+  { club: "Norvège", competition: "Qualifs Coupe du monde", adversaire: "Israël", date: "2025-10-11", minute: 63, pied: "gauche", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "OZFTRAzE1V4", debut: 432, fin: 500 } },
+  { club: "Norvège", competition: "Qualifs Coupe du monde", adversaire: "Israël", date: "2025-10-11", minute: 72, pied: "droit", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "OZFTRAzE1V4", debut: 508, fin: 570 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2025-10-18", minute: 45, pied: "droit", buteur: "Christoph Baumgartner", xg: null, xgot: null, video: { id: "pdujvxDnSug", debut: 48, fin: 73 } },
+  { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "Magdeburg", date: "2025-12-02", minute: 54, pied: "droit", buteur: "Christoph Baumgartner", xg: null, xgot: null, video: { id: "0B6cj2OOM5o", debut: 130, fin: 155 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Mayence", date: "2026-01-31", minute: 40, pied: "gauche", buteur: "Conrad Harder", xg: null, xgot: null, video: { id: "Y6y_8uxz5aU", debut: 18, fin: 45 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Francfort", date: "2026-04-18", minute: 81, pied: "droit", buteur: "Conrad Harder", xg: null, xgot: null, video: { id: "IKtWgQIGv98", debut: 43, fin: 56 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2026-09-13", minute: 72, pied: "droit", buteur: "Willi Orbán", xg: null, xgot: null, video: { id: "X_p818BPjZ8", debut: 114, fin: 142 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2026-09-13", minute: 74, pied: "droit", buteur: "Christopher Nkunku", xg: null, xgot: null, video: { id: "X_p818BPjZ8", debut: 143, fin: 167 } },
+  { club: "Norvège", competition: "Ligue des nations", adversaire: "Danemark", date: "2026-09-24", minute: 18, pied: "droit", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "aGSyoI4qDco", debut: 113, fin: 179 } }
 ];
 /* ============================================================ */
 
 const fmt = n => String(n).replace(".", ",");
 const jour = d => new Date(d + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
+const chrono = (a, b) =>
+  (a.date + String(a.minute ?? 0).padStart(3, "0")).localeCompare(b.date + String(b.minute ?? 0).padStart(3, "0"));
+[buts, passes].forEach(l => { l.sort(chrono); l.forEach((e, i) => { e.n = i + 1; }); });
+document.getElementById("tot-buts").textContent = "(" + buts.length + ")";
+document.getElementById("tot-passes").textContent = "(" + passes.length + ")";
+
 function videoHtml(v) {
-  if (!v || !v.id) return "";
+  if (!v || !v.id) return '<p class="empty">Vidéo introuvable.</p>';
   let q = "rel=0";
   if (v.debut) q += "&start=" + v.debut;
   if (v.fin) q += "&end=" + v.fin;
@@ -149,7 +214,7 @@ function carte(e, passe, num) {
   if (!passe && e.passeur) chips.push("Passeur : " + e.passeur);
   if (e.xg != null) chips.push("xG " + fmt(e.xg));
   if (e.xgot != null) chips.push("xGOT " + fmt(e.xgot));
-  return '<details class="card"><summary><span class="vs">vs ' + e.adversaire + (num ? " #" + num : "") + '</span>' +
+  return '<details class="card"><summary><span class="no">n°' + e.n + '</span><span class="vs">vs ' + e.adversaire + (num ? " #" + num : "") + '</span>' +
     (e.minute != null ? '<span class="min">' + e.minute + "’</span>" : "") +
     '<span class="date">' + jour(e.date) + (e.competition ? ", " + e.competition : "") + "</span></summary>" +
     '<div class="body"><div class="chips">' + chips.map(c => "<span>" + c + "</span>").join("") + "</div>" +
@@ -202,28 +267,77 @@ function blocClassement(titre, rang) {
       : '<p class="empty">Pas encore de données.</p>') + "</details>";
 }
 
-let compChoisie = Object.keys(statsComp).find(k => statsComp[k].length) || Object.keys(statsComp)[0];
+const statsNat = {
+  "Coupe du monde": [],
+  "Euro": [],
+  "Ligue des nations": [],
+  "Qualifs Coupe du monde": [],
+  "Qualifs Euro": [],
+  "Matchs amicaux": []
+};
 
-function panneauComp() {
-  const lignes = statsComp[compChoisie];
-  document.getElementById("comp-panel").innerHTML = lignes.length
+const blocsComp = [
+  { cle: "club", titre: "Stats en club", donnees: statsComp },
+  { cle: "nat", titre: "Stats en sélection nationale", donnees: statsNat }
+];
+const choix = {};
+blocsComp.forEach(b => {
+  choix[b.cle] = Object.keys(b.donnees).find(k => b.donnees[k].length) || Object.keys(b.donnees)[0];
+});
+
+function panneauComp(b) {
+  const lignes = b.donnees[choix[b.cle]];
+  document.getElementById("panel-" + b.cle).innerHTML = lignes.length
     ? '<ul class="rang">' + lignes.map(([nom, v]) =>
         "<li><span>" + nom + '</span><span class="n">' + v + "</span></li>").join("") + "</ul>"
     : '<p class="empty">Pas encore de données.</p>';
-  document.querySelectorAll("#l-stats [data-comp]").forEach(b =>
-    b.setAttribute("aria-pressed", b.dataset.comp === compChoisie));
+  document.querySelectorAll('#l-stats [data-bloc="' + b.cle + '"] button').forEach(btn =>
+    btn.setAttribute("aria-pressed", btn.dataset.comp === choix[b.cle]));
+}
+
+function decisifs() {
+  const t = {};
+  const ajoute = (liste, cle) => liste.forEach(e => {
+    const o = t[e.adversaire] || (t[e.adversaire] = { buts: 0, passes: 0 });
+    o[cle]++;
+  });
+  ajoute(buts, "buts");
+  ajoute(passes, "passes");
+  return Object.entries(t).sort((a, b) =>
+    (b[1].buts + b[1].passes) - (a[1].buts + a[1].passes) ||
+    b[1].buts - a[1].buts ||
+    a[0].localeCompare(b[0], "fr"));
+}
+
+function blocDecisifs() {
+  const rang = decisifs();
+  const mot = (n, s, p) => n + " " + (n > 1 ? p : s);
+  return '<details class="club"><summary><h3>Contre qui il est le plus décisif</h3><span class="count">' +
+    rang.length + " équipe" + (rang.length > 1 ? "s" : "") + "</span></summary>" +
+    (rang.length
+      ? '<ul class="rang gaa">' + rang.map(([nom, o]) => {
+          const det = [o.buts ? mot(o.buts, "but", "buts") : "", o.passes ? mot(o.passes, "passe D", "passes D") : ""]
+            .filter(Boolean).join(", ");
+          return "<li><span>" + nom + '<span class="sous">' + det + '</span></span><span class="n">' +
+            (o.buts + o.passes) + " GA</span></li>";
+        }).join("") + "</ul>"
+      : '<p class="empty">Pas encore de données.</p>') + "</details>";
 }
 
 function stats() {
   document.getElementById("l-stats").innerHTML =
     blocClassement("Qui il a le plus servi", classement(passes, "buteur")) +
     blocClassement("Qui l'a le plus servi", classement(buts, "passeur")) +
-    '<details class="club"><summary><h3>Par compétition</h3></summary><div class="sub">' +
-    Object.keys(statsComp).map(n => '<button type="button" data-comp="' + n + '">' + n + "</button>").join("") +
-    '</div><div id="comp-panel"></div></details>';
-  document.querySelectorAll("#l-stats [data-comp]").forEach(b =>
-    b.onclick = () => { compChoisie = b.dataset.comp; panneauComp(); });
-  panneauComp();
+    blocDecisifs() +
+    blocsComp.map(b =>
+      '<details class="club"><summary><h3>' + b.titre + '</h3></summary><div class="sub" data-bloc="' + b.cle + '">' +
+      Object.keys(b.donnees).map(n => '<button type="button" data-comp="' + n + '">' + n + "</button>").join("") +
+      '</div><div id="panel-' + b.cle + '"></div></details>').join("");
+  blocsComp.forEach(b => {
+    document.querySelectorAll('#l-stats [data-bloc="' + b.cle + '"] button').forEach(btn =>
+      btn.onclick = () => { choix[b.cle] = btn.dataset.comp; panneauComp(b); });
+    panneauComp(b);
+  });
 }
 stats();
 
