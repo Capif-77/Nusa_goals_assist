@@ -69,6 +69,19 @@ details>summary::-webkit-details-marker{display:none}
 .card .empty{margin:.75rem 0 0}
 .rang.gaa li{align-items:center}
 .rang .sous{display:block;color:var(--muted);font-size:.9rem}
+.cat{margin-top:1rem;border-bottom:1px solid var(--line)}
+.cat>summary{display:flex;align-items:center;gap:.75rem;padding:.3rem 0}
+.cat>summary h4{margin:0;flex:1;font:700 1.4rem "Barlow Condensed","Arial Narrow",sans-serif}
+.cat>summary .count{color:var(--muted);font-size:.9rem}
+.cat>summary::after{content:"+";font:700 1.6rem "Barlow Condensed","Arial Narrow",sans-serif;color:var(--red);width:1.5rem;text-align:center}
+.cat[open]>summary::after{content:"\2212"}
+.cat>summary:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.cat .list{margin:.5rem 0 1rem}
+.note{color:var(--muted);margin:.75rem 0 0;font-size:.95rem}
+.tc{list-style:none;margin:.4rem 0 0;padding:0;display:grid;gap:.3rem}
+.tc li{color:var(--muted)}
+.tc .ici{color:var(--ink);font-weight:500}
+.tc a{color:var(--red);font-weight:500}
 </style>
 </head>
 <body>
@@ -80,6 +93,7 @@ details>summary::-webkit-details-marker{display:none}
     <button role="tab" id="t-buts" aria-selected="true" aria-controls="p-buts">Buts</button>
     <button role="tab" id="t-passes" aria-selected="false" aria-controls="p-passes">Passes D</button>
     <button role="tab" id="t-stats" aria-selected="false" aria-controls="p-stats">Stats</button>
+    <button role="tab" id="t-saisons" aria-selected="false" aria-controls="p-saisons">Saisons</button>
   </div>
 </header>
 
@@ -96,24 +110,39 @@ details>summary::-webkit-details-marker{display:none}
     <h2>Stats</h2>
     <div id="l-stats"></div>
   </section>
+  <section id="p-saisons" role="tabpanel" aria-labelledby="t-saisons" hidden>
+    <h2>Stats par saison</h2>
+    <div id="l-saisons"></div>
+  </section>
 </main>
 
 <script>
 /* ============================================================
    TES DONNÉES : c'est ici que tu modifies / ajoutes des lignes.
    Copie un bloc { ... } entre accolades, sépare-les par une virgule.
-   - club : "Stabæk", "Club Brugge", "RB Leipzig", ou "Norvège" pour la sélection nationale
-   - competition : "Eliteserien" (Stabæk), "Pro League" (Bruges), "Bundesliga" (Leipzig)...
-   - passeur : (pour les buts, facultatif) celui qui a donné la passe
+   - club : "Stabæk", "Club Brugge", "RB Leipzig", ou "Norvège"
+   - competition : le nom exact (Eliteserien, Pro League, Bundesliga = Championnat)
+   - passeur / buteur : facultatif
    - date : AAAA-MM-JJ
    - pied : "droit", "gauche" ou "tête"
    - xg / xgot : mets null si tu ne les as pas
-   - video : { id: "ID_YOUTUBE", debut: 12, fin: 25 }  (secondes, facultatif)
-             ou null tant que tu n'as pas la vidéo
-   L'ID YouTube, c'est la fin du lien : youtube.com/watch?v=ICI
-   Les lignes ci-dessous sont des EXEMPLES à remplacer.
+   - video : { id: "ID_YOUTUBE", debut: 12, fin: 25 } ou null
    ============================================================ */
 const clubs = ["Stabæk", "Club Brugge", "RB Leipzig", "Norvège"];
+
+/* Catégories affichées dans chaque club (dans cet ordre). Les vides sont masquées. */
+const categories = {
+  "Stabæk": ["Championnat"],
+  "Club Brugge": ["Championnat", "Ligue des champions", "Conference League"],
+  "RB Leipzig": ["Championnat", "Coupe d'Allemagne", "Ligue des champions"],
+  "Norvège": ["Coupe du monde", "Euro", "Ligue des nations", "Qualifs Coupe du monde", "Qualifs Euro", "Matchs amicaux"]
+};
+const categorieDe = e => {
+  const c = e.competition;
+  if (["Eliteserien", "Pro League", "Bundesliga"].includes(c)) return "Championnat";
+  if (c === "Match amical") return "Matchs amicaux";
+  return c;
+};
 
 const buts = [
   { club: "Stabæk", competition: "Eliteserien", adversaire: "Bodø/Glimt", date: "2021-06-27", minute: 81, pied: "droit", passeur: "Uche Sabastine", xg: null, xgot: null, video: { id: "RIvW4-nPAXo", debut: 239, fin: 259 } },
@@ -191,15 +220,41 @@ const chrono = (a, b) =>
 document.getElementById("tot-buts").textContent = "(" + buts.length + ")";
 document.getElementById("tot-passes").textContent = "(" + passes.length + ")";
 
-function videoHtml(v) {
+const mmss = s => {
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = String(s % 60).padStart(2, "0");
+  return h ? h + ":" + String(m).padStart(2, "0") + ":" + x : m + ":" + x;
+};
+
+function videoHtml(v, sansLecteur) {
   if (!v || !v.id) return '<p class="empty">Vidéo introuvable.</p>';
+  const lien = "https://www.youtube.com/watch?v=" + v.id + (v.debut ? "&t=" + v.debut + "s" : "");
+  const a = '<a class="yt" href="' + lien + '" target="_blank" rel="noopener">Ouvrir la vidéo sur YouTube</a>';
+  if (sansLecteur)
+    return '<p class="note">Cette vidéo ne peut pas être lue sur le site : à regarder directement sur YouTube.</p>' + a;
   let q = "rel=0";
   if (v.debut) q += "&start=" + v.debut;
   if (v.fin) q += "&end=" + v.fin;
-  const lien = "https://www.youtube.com/watch?v=" + v.id + (v.debut ? "&t=" + v.debut + "s" : "");
   return '<div class="video"><iframe src="https://www.youtube.com/embed/' + v.id + "?" + q +
-    '" title="Vidéo de l\'action" loading="lazy" allowfullscreen></iframe></div>' +
-    '<a class="yt" href="' + lien + '" target="_blank" rel="noopener">Ouvrir la vidéo sur YouTube</a>';
+    '" title="Vidéo de l\'action" loading="lazy" allowfullscreen></iframe></div>' + a;
+}
+
+/* Time codes de tous les buts et passes D présents dans la même vidéo */
+function timecodes(e) {
+  const it = [];
+  buts.forEach(x => it.push({ t: "But", x }));
+  passes.forEach(x => it.push({ t: "Passe D", x }));
+  const l = it.filter(i => i.x.video && i.x.video.id === e.video.id && i.x.video.debut != null)
+    .sort((a, b) => a.x.video.debut - b.x.video.debut);
+  return '<p class="note">Time codes dans la vidéo :</p><ul class="tc">' + l.map(i =>
+    "<li" + (i.x === e ? ' class="ici"' : "") + '><a href="https://www.youtube.com/watch?v=' + e.video.id +
+    "&t=" + i.x.video.debut + 's" target="_blank" rel="noopener">' + mmss(i.x.video.debut) + "</a> " + i.t +
+    (i.x.minute != null ? " (" + i.x.minute + "’)" : "") + "</li>").join("") + "</ul>";
+}
+
+function media(e) {
+  if (e.competition === "Coupe d'Allemagne" && e.video && e.video.id)
+    return videoHtml(e.video, true) + timecodes(e);
+  return videoHtml(e.video);
 }
 
 function numero(e, items) {
@@ -218,16 +273,23 @@ function carte(e, passe, num) {
     (e.minute != null ? '<span class="min">' + e.minute + "’</span>" : "") +
     '<span class="date">' + jour(e.date) + (e.competition ? ", " + e.competition : "") + "</span></summary>" +
     '<div class="body"><div class="chips">' + chips.map(c => "<span>" + c + "</span>").join("") + "</div>" +
-    videoHtml(e.video) + "</div></details>";
+    media(e) + "</div></details>";
 }
 
 function remplir(id, liste, passe) {
   document.getElementById(id).innerHTML = clubs.map(c => {
     const items = liste.filter(e => e.club === c);
+    const cats = (categories[c] || []).slice();
+    items.forEach(e => { const k = categorieDe(e); if (!cats.includes(k)) cats.push(k); });
+    const blocs = cats.map(k => {
+      const sous = items.filter(e => categorieDe(e) === k);
+      return sous.length
+        ? '<details class="cat" open><summary><h4>' + k + '</h4><span class="count">' + sous.length + "</span></summary>" +
+          '<div class="list">' + sous.map(e => carte(e, passe, numero(e, items))).join("") + "</div></details>"
+        : "";
+    }).join("");
     return '<details class="club"><summary><h3>' + c + '</h3><span class="count">' + items.length + "</span></summary>" +
-      (items.length
-        ? '<div class="list">' + items.map(e => carte(e, passe, numero(e, items))).join("") + "</div>"
-        : '<p class="empty">Rien pour le moment.</p>') + "</details>";
+      (items.length ? blocs : '<p class="empty">Rien pour le moment.</p>') + "</details>";
   }).join("");
 }
 remplir("l-buts", buts, false);
@@ -238,17 +300,59 @@ remplir("l-passes", passes, true);
    ============================================================ */
 const statsComp = {
   "Championnat": [
-    ["Matchs joués", 133]
+    ["Matchs joués", 133],
+    ["Minutes jouées", 6985],
+    ["Buts", 17],
+    ["Passes décisives", 13],
+    ["Grosses occasions créées", 28],
+    ["Occasions créées", 112],
+    ["Dribbles réussis", 222],
+    ["Grosses occasions manquées", 6],
+    ["Tacles", 105],
+    ["Interceptions", 36],
+    ["xG (depuis 2023-2024)", "10,47"],
+    ["xA (depuis 2023-2024)", "13,34"]
   ],
   "Ligue des champions": [
     ["Matchs joués", 13],
     ["Minutes jouées", 564],
     ["Buts", 1],
-    ["Occasions créées", 14],
+    ["Passes décisives", 0],
     ["Grosses occasions créées", 1],
-    ["Dribbles réussis", 21]
+    ["Occasions créées", 14],
+    ["Dribbles réussis", 21],
+    ["Grosses occasions manquées", 3],
+    ["Tacles", 11],
+    ["Interceptions", 2],
+    ["xG", "1,31"],
+    ["xA", "1,41"]
   ],
-  "Coupe": []
+  "Coupe": [
+    ["Matchs joués", 13],
+    ["Minutes jouées", 799],
+    ["Buts", 4],
+    ["Passes décisives", 4],
+    ["Grosses occasions créées", 6],
+    ["Occasions créées", 15],
+    ["Dribbles réussis", 28],
+    ["Grosses occasions manquées", 1],
+    ["Tacles", 9],
+    ["Interceptions", 12]
+  ],
+  "Conference League": [
+    ["Matchs joués", 13],
+    ["Minutes jouées", 539],
+    ["Buts", 1],
+    ["Passes décisives", 1],
+    ["Grosses occasions créées", 1],
+    ["Occasions créées", 9],
+    ["Dribbles réussis", 24],
+    ["Grosses occasions manquées", 1],
+    ["Tacles", 4],
+    ["Interceptions", 0],
+    ["xG", "0,65"],
+    ["xA", "0,17"]
+  ]
 };
 /* ============================================================ */
 
@@ -268,17 +372,97 @@ function blocClassement(titre, rang) {
 }
 
 const statsNat = {
-  "Coupe du monde": [],
+  "Coupe du monde": [
+    ["Matchs joués", 6],
+    ["Minutes jouées", 325],
+    ["Buts", 1],
+    ["Passes décisives", 0],
+    ["Grosses occasions créées", 0],
+    ["Occasions créées", 2],
+    ["Dribbles réussis", 6],
+    ["Grosses occasions manquées", 0],
+    ["Tacles", 4],
+    ["Interceptions", 2],
+    ["xG", "0,24"],
+    ["xA", "0,19"]
+  ],
   "Euro": [],
-  "Ligue des nations": [],
-  "Qualifs Coupe du monde": [],
-  "Qualifs Euro": [],
-  "Matchs amicaux": []
+  "Ligue des nations": [
+    ["Matchs joués", 9],
+    ["Minutes jouées", 615],
+    ["Buts", 3],
+    ["Passes décisives", 2],
+    ["Grosses occasions créées", 4],
+    ["Occasions créées", 12],
+    ["Dribbles réussis", 39],
+    ["Grosses occasions manquées", 1],
+    ["Tacles", 4],
+    ["Interceptions", 7],
+    ["xG (depuis 2026)", "0,11"],
+    ["xA (depuis 2026)", "0,89"]
+  ],
+  "Qualifs Coupe du monde": [
+    ["Matchs joués", 6],
+    ["Minutes jouées", 477],
+    ["Buts", 2],
+    ["Passes décisives", 3],
+    ["Grosses occasions créées", 7],
+    ["Occasions créées", 14],
+    ["Dribbles réussis", 27],
+    ["Grosses occasions manquées", 0],
+    ["Tacles", 4],
+    ["Interceptions", 2]
+  ],
+  "Qualifs Euro": [
+    ["Matchs joués", 3],
+    ["Minutes jouées", 129],
+    ["Buts", 0],
+    ["Passes décisives", 3],
+    ["Grosses occasions créées", 2],
+    ["Occasions créées", 6],
+    ["Dribbles réussis", 9],
+    ["Grosses occasions manquées", 0],
+    ["Tacles", 1],
+    ["Interceptions", 2]
+  ],
+  "Matchs amicaux": [
+    ["Matchs joués", 9],
+    ["Minutes jouées", 432],
+    ["Buts", 3],
+    ["Passes décisives", 2],
+    ["Grosses occasions créées", 3],
+    ["Occasions créées", 9],
+    ["Dribbles réussis", 18],
+    ["Grosses occasions manquées", 0],
+    ["Tacles", 7],
+    ["Interceptions", 6]
+  ]
 };
 
+const ORDRE = ["Matchs joués", "Minutes jouées", "Buts", "Passes décisives", "Grosses occasions créées", "Occasions créées",
+  "Dribbles réussis", "Grosses occasions manquées", "Tacles", "Interceptions", "xG", "xA"];
+const nombre = v => typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
+
+/* Catégorie Total : somme de toutes les compétitions qui ont des données */
+function total(donnees) {
+  const comps = Object.keys(donnees).filter(k => donnees[k].length);
+  const base = n => n.replace(/ \(.*\)$/, "");
+  const lire = (k, nom) => { const l = donnees[k].find(x => base(x[0]) === nom); return l ? nombre(l[1]) : null; };
+  return ORDRE.map(nom => {
+    const ok = comps.filter(k => lire(k, nom) !== null);
+    if (!ok.length) return null;
+    const somme = ok.reduce((a, k) => a + lire(k, nom), 0);
+    const manque = comps.filter(k => !ok.includes(k));
+    const part = nom === "xG" || nom === "xA";
+    const v = part ? String(Math.round(somme * 100) / 100).replace(".", ",") : somme;
+    const note = !manque.length ? "" : part ? "seulement : " + ok.join(", ") : "hors " + manque.join(", ");
+    return [nom, v, note];
+  }).filter(Boolean);
+}
+
 const blocsComp = [
-  { cle: "club", titre: "Stats en club", donnees: statsComp },
-  { cle: "nat", titre: "Stats en sélection nationale", donnees: statsNat }
+  { cle: "club", titre: "Stats en club", donnees: { Total: total(statsComp), ...statsComp } },
+  { cle: "nat", titre: "Stats en sélection nationale", donnees: { Total: total(statsNat), ...statsNat } }
 ];
 const choix = {};
 blocsComp.forEach(b => {
@@ -288,8 +472,8 @@ blocsComp.forEach(b => {
 function panneauComp(b) {
   const lignes = b.donnees[choix[b.cle]];
   document.getElementById("panel-" + b.cle).innerHTML = lignes.length
-    ? '<ul class="rang">' + lignes.map(([nom, v]) =>
-        "<li><span>" + nom + '</span><span class="n">' + v + "</span></li>").join("") + "</ul>"
+    ? '<ul class="rang' + (lignes.some(l => l[2]) ? " gaa" : "") + '">' + lignes.map(([nom, v, note]) =>
+        "<li><span>" + nom + (note ? '<span class="sous">' + note + "</span>" : "") + '</span><span class="n">' + v + "</span></li>").join("") + "</ul>"
     : '<p class="empty">Pas encore de données.</p>';
   document.querySelectorAll('#l-stats [data-bloc="' + b.cle + '"] button').forEach(btn =>
     btn.setAttribute("aria-pressed", btn.dataset.comp === choix[b.cle]));
@@ -341,7 +525,75 @@ function stats() {
 }
 stats();
 
-const onglets = { buts: ["t-buts", "p-buts"], passes: ["t-passes", "p-passes"], stats: ["t-stats", "p-stats"] };
+/* ============================================================
+   STATS PAR SAISON : une entrée par saison. Dans chaque saison, "Total"
+   (puis plus tard "RB Leipzig", "Norvège"... : des boutons apparaissent
+   dès qu'il y a plusieurs entrées). Lignes : ["Nom", valeur].
+   ============================================================ */
+const saisons = {
+  "2026-27": {
+    "Total": [
+      ["Matchs joués", 9],
+      ["Minutes jouées", 707],
+      ["Buts", 3],
+      ["Passes décisives", 3],
+      ["Grosses occasions créées", 5],
+      ["Occasions créées", 15],
+      ["Dribbles réussis", 36],
+      ["Grosses occasions manquées", 1],
+      ["Tacles", 7],
+      ["Interceptions", 3],
+      ["xG", "1,0"],
+      ["xA", "2,07"]
+    ]
+  },
+  "2025-26": {
+    "Total": [
+      ["Matchs joués", 50],
+      ["Minutes jouées", 3220],
+      ["Buts", 9],
+      ["Passes décisives", 6],
+      ["Grosses occasions créées", 17],
+      ["Occasions créées", 56],
+      ["Dribbles réussis", 110],
+      ["Grosses occasions manquées", 3],
+      ["Tacles", 41],
+      ["Interceptions", 17],
+      ["xG", "5,40", "seulement : Bundesliga et Coupe du monde"],
+      ["xA", "9,76", "seulement : Bundesliga et Coupe du monde"]
+    ]
+  }
+};
+/* ============================================================ */
+
+const listeHtml = lignes => lignes.length
+  ? '<ul class="rang' + (lignes.some(l => l[2]) ? " gaa" : "") + '">' + lignes.map(([nom, v, note]) =>
+      "<li><span>" + nom + (note ? '<span class="sous">' + note + "</span>" : "") + '</span><span class="n">' + v + "</span></li>").join("") + "</ul>"
+  : '<p class="empty">Pas encore de données.</p>';
+
+function remplirSaisons() {
+  const noms = Object.keys(saisons).sort().reverse();
+  const el = document.getElementById("l-saisons");
+  el.innerHTML = noms.map((n, i) => {
+    const cles = Object.keys(saisons[n]);
+    return '<details class="club"' + (i === 0 ? " open" : "") + ' data-saison="' + n + '"><summary><h3>Saison ' + n + "</h3></summary>" +
+      (cles.length > 1
+        ? '<div class="sub">' + cles.map(c => '<button type="button" data-c="' + c + '">' + c + "</button>").join("") + "</div>"
+        : "") + '<div class="pan"></div></details>';
+  }).join("");
+  el.querySelectorAll("details[data-saison]").forEach(d => {
+    const n = d.dataset.saison;
+    const aff = c => {
+      d.querySelector(".pan").innerHTML = listeHtml(saisons[n][c]);
+      d.querySelectorAll(".sub button").forEach(b => b.setAttribute("aria-pressed", b.dataset.c === c));
+    };
+    d.querySelectorAll(".sub button").forEach(b => b.onclick = () => aff(b.dataset.c));
+    aff(Object.keys(saisons[n])[0]);
+  });
+}
+remplirSaisons();
+
+const onglets = { buts: ["t-buts", "p-buts"], passes: ["t-passes", "p-passes"], stats: ["t-stats", "p-stats"], saisons: ["t-saisons", "p-saisons"] };
 function montrer(nom) {
   for (const k in onglets) {
     const actif = k === nom;
@@ -352,6 +604,7 @@ function montrer(nom) {
 document.getElementById("t-buts").onclick = () => montrer("buts");
 document.getElementById("t-passes").onclick = () => montrer("passes");
 document.getElementById("t-stats").onclick = () => montrer("stats");
+document.getElementById("t-saisons").onclick = () => montrer("saisons");
 </script>
 </body>
 </html>
