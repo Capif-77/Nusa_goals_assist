@@ -82,6 +82,12 @@ details>summary::-webkit-details-marker{display:none}
 .tc li{color:var(--muted)}
 .tc .ici{color:var(--ink);font-weight:500}
 .tc a{color:var(--red);font-weight:500}
+.rang li{flex-wrap:wrap}
+.rang li>span:first-child{flex:1}
+.dfn{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.dfn::after{content:" ⓘ";color:var(--muted);font-size:.85em}
+.dfn:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.defn{flex-basis:100%;margin:.4rem 0 0;color:var(--muted);font-size:.95rem}
 </style>
 </head>
 <body>
@@ -439,6 +445,43 @@ const statsNat = {
   ]
 };
 
+/* Définitions affichées au clic sur le nom d'une stat (si la stat n'est pas ici, pas de clic) */
+const DEFS = {
+  "Grosses occasions créées": "Passe ou action qui donne à un coéquipier une occasion très nette de marquer (par exemple seul face au gardien ou tout près du but), qu'il marque ou non.",
+  "Occasions créées": "Passes clés : passes qui permettent directement à un coéquipier de tirer au but, que le tir finisse en but ou non.",
+  "Dribbles réussis": "Fois où le joueur élimine un adversaire balle au pied et garde le ballon.",
+  "Grosses occasions manquées": "Occasion très nette de marquer (par exemple seul face au gardien ou tout près du but) que le joueur ne transforme pas.",
+  "Tacles": "Actions défensives où le joueur va au contact d'un adversaire pour lui prendre le ballon.",
+  "Interceptions": "Fois où le joueur coupe une passe adverse et récupère ou dévie le ballon.",
+  "Récupérations": "Ballons récupérés par le joueur après une perte : ballon libre, passe ratée de l'adversaire, etc.",
+  "Tirs cadrés": "Tirs qui vont dans le cadre : ils finissent au fond des filets ou sont arrêtés par le gardien.",
+  "Duels gagnés": "Confrontations directes avec un adversaire pour le ballon (au sol ou dans les airs). Premier chiffre : duels gagnés, second : duels disputés.",
+  "Fautes subies": "Fautes sifflées en faveur de son équipe parce qu'un adversaire a fait tomber ou gêné le joueur.",
+  "Centres réussis": "Centres qui trouvent un coéquipier. Premier chiffre : centres réussis, second : centres tentés.",
+  "Note Sofascore": "Note sur 10 donnée par l'application Sofascore, calculée automatiquement à partir des statistiques du match. Ici, la note moyenne de la saison.",
+  "Note FotMob": "Note sur 10 donnée par l'application FotMob, calculée automatiquement à partir des statistiques du match. Ici, la note moyenne de la saison.",
+  "Homme du match (MOTM)": "MOTM = Man Of The Match : nombre de fois où le joueur a été élu homme du match. Cette distinction est donnée par la compétition (par exemple la Bundesliga) ou annoncée par son club ou sa sélection.",
+  "Meilleur joueur de son équipe": "Nombre de matchs où le joueur a été désigné meilleur joueur de son équipe, par son club ou sa sélection.",
+  "Joueur du mois (POTM)": "POTM = Player Of The Month : nombre de fois où le joueur a été élu joueur du mois par la ligue (par exemple la Bundesliga).",
+  "xG": "Expected goals (buts attendus) : mesure la qualité des occasions de tir. Chaque tir a une valeur entre 0 et 1 selon sa probabilité de finir en but. Un xG de 3 veut dire qu'avec les mêmes tirs, un joueur moyen aurait marqué environ 3 buts.",
+  "xA": "Expected assists (passes décisives attendues) : mesure la qualité des passes qui amènent un tir, selon la probabilité que ce tir finisse en but, même si le coéquipier ne marque pas."
+};
+function ligne(nom, v, note) {
+  const d = DEFS[nom] || DEFS[nom.replace(/ \(.*\)$/, "")];
+  const sous = note ? '<span class="sous">' + note + "</span>" : "";
+  return d
+    ? '<li><span><button type="button" class="dfn" aria-expanded="false">' + nom + "</button>" + sous +
+      '</span><span class="n">' + v + '</span><p class="defn" hidden>' + d + "</p></li>"
+    : "<li><span>" + nom + sous + '</span><span class="n">' + v + "</span></li>";
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".dfn");
+  if (!b) return;
+  const p = b.closest("li").querySelector(".defn");
+  p.hidden = !p.hidden;
+  b.setAttribute("aria-expanded", String(!p.hidden));
+});
+
 const ORDRE = ["Matchs joués", "Minutes jouées", "Buts", "Passes décisives", "Grosses occasions créées", "Occasions créées",
   "Dribbles réussis", "Grosses occasions manquées", "Tacles", "Interceptions", "xG", "xA"];
 const nombre = v => typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
@@ -472,8 +515,7 @@ blocsComp.forEach(b => {
 function panneauComp(b) {
   const lignes = b.donnees[choix[b.cle]];
   document.getElementById("panel-" + b.cle).innerHTML = lignes.length
-    ? '<ul class="rang' + (lignes.some(l => l[2]) ? " gaa" : "") + '">' + lignes.map(([nom, v, note]) =>
-        "<li><span>" + nom + (note ? '<span class="sous">' + note + "</span>" : "") + '</span><span class="n">' + v + "</span></li>").join("") + "</ul>"
+    ? '<ul class="rang' + (lignes.some(l => l[2]) ? " gaa" : "") + '">' + lignes.map(([nom, v, note]) => ligne(nom, v, note)).join("") + "</ul>"
     : '<p class="empty">Pas encore de données.</p>';
   document.querySelectorAll('#l-stats [data-bloc="' + b.cle + '"] button').forEach(btn =>
     btn.setAttribute("aria-pressed", btn.dataset.comp === choix[b.cle]));
@@ -533,24 +575,53 @@ stats();
 const saisons = {
   "2026-27": {
     "Total": [
-      ["Matchs joués", 9],
-      ["Minutes jouées", 707],
+      ["Matchs joués", 12],
+      ["Minutes jouées", 871],
+      ["Buts", 4],
+      ["Passes décisives", 4],
+      ["Grosses occasions créées", 7],
+      ["Occasions créées", 20],
+      ["Dribbles réussis", 41],
+      ["Grosses occasions manquées", 2],
+      ["Tacles", 15],
+      ["Interceptions", 4],
+      ["Récupérations", 39],
+      ["Tirs", 28],
+      ["Tirs cadrés", 12],
+      ["Duels gagnés", "77 / 143"],
+      ["Fautes subies", 20],
+      ["Centres réussis", "8 / 26"],
+      ["Note Sofascore", "7,61"],
+      ["Note FotMob", "7,67"],
+      ["Homme du match (MOTM)", 2],
+      ["Meilleur joueur de son équipe", 5],
+      ["Joueur du mois (POTM)", 0],
+      ["xG", "1,56"],
+      ["xA", "3,38"]
+    ],
+    "Club": [
+      ["Matchs joués", 6],
+      ["Minutes jouées", 522],
       ["Buts", 3],
-      ["Passes décisives", 3],
-      ["Grosses occasions créées", 5],
-      ["Occasions créées", 15],
-      ["Dribbles réussis", 36],
-      ["Grosses occasions manquées", 1],
-      ["Tacles", 7],
-      ["Interceptions", 3],
-      ["xG", "1,0"],
-      ["xA", "2,07"]
+      ["Passes décisives", 2],
+      ["Grosses occasions créées", 3],
+      ["Occasions créées", 10],
+      ["Dribbles réussis", 23]
+    ],
+    "Sélection": [
+      ["Matchs joués", 4],
+      ["Minutes jouées", 259],
+      ["Buts", 0],
+      ["Passes décisives", 1],
+      ["Grosses occasions créées", 2],
+      ["Occasions créées", 5],
+      ["Dribbles réussis", 13]
     ]
   },
   "2025-26": {
     "Total": [
       ["Matchs joués", 50],
-      ["Minutes jouées", 3220],
+      ["Minutes jouées", 3265],
       ["Buts", 9],
       ["Passes décisives", 6],
       ["Grosses occasions créées", 17],
@@ -561,14 +632,132 @@ const saisons = {
       ["Interceptions", 17],
       ["xG", "5,40", "seulement : Bundesliga et Coupe du monde"],
       ["xA", "9,76", "seulement : Bundesliga et Coupe du monde"]
+    ],
+    "Club": [
+      ["Matchs joués", 35],
+      ["Minutes jouées", 2320],
+      ["Buts", 5],
+      ["Passes décisives", 4],
+      ["Grosses occasions créées", 11],
+      ["Occasions créées", 39],
+      ["Dribbles réussis", 71],
+      ["Grosses occasions manquées", 3],
+      ["Tacles", 29],
+      ["Interceptions", 10],
+      ["xG", "5,16", "Bundesliga uniquement"],
+      ["xA", "9,57", "Bundesliga uniquement"]
+    ],
+    "Sélection": [
+      ["Matchs joués", 15],
+      ["Minutes jouées", 945],
+      ["Buts", 4],
+      ["Passes décisives", 2],
+      ["Grosses occasions créées", 6],
+      ["Occasions créées", 17],
+      ["Dribbles réussis", 39],
+      ["Grosses occasions manquées", 0],
+      ["Tacles", 12],
+      ["Interceptions", 7],
+      ["xG", "0,24", "Coupe du monde uniquement"],
+      ["xA", "0,19", "Coupe du monde uniquement"]
+    ]
+  },
+  "2024-25": {
+    "Total": [
+      ["Matchs joués", 48],
+      ["Minutes jouées", 2978],
+      ["Buts", 9],
+      ["Passes décisives", 9],
+      ["Grosses occasions créées", 16],
+      ["Occasions créées", 55],
+      ["Dribbles réussis", 99]
+    ],
+    "Club": [
+      ["Matchs joués", 40],
+      ["Minutes jouées", 2450],
+      ["Buts", 5],
+      ["Passes décisives", 7],
+      ["Grosses occasions créées", 13],
+      ["Occasions créées", 45],
+      ["Dribbles réussis", 68]
+    ],
+    "Sélection": [
+      ["Matchs joués", 8],
+      ["Minutes jouées", 528],
+      ["Buts", 4],
+      ["Passes décisives", 2],
+      ["Grosses occasions créées", 3],
+      ["Occasions créées", 10],
+      ["Dribbles réussis", 31]
+    ]
+  },
+  "2023-24": {
+    "Total": [
+      ["Matchs joués", 47],
+      ["Minutes jouées", 2236],
+      ["Buts", 5],
+      ["Passes décisives", 9, "dont 1 en tour de qualification de Conference League"],
+      ["Grosses occasions créées", 12],
+      ["Occasions créées", 47],
+      ["Dribbles réussis", 95]
+    ],
+    "Club": [
+      ["Matchs joués", 40],
+      ["Minutes jouées", 1916],
+      ["Buts", 4],
+      ["Passes décisives", 3],
+      ["Grosses occasions créées", 7],
+      ["Occasions créées", 36],
+      ["Dribbles réussis", 79]
+    ],
+    "Sélection": [
+      ["Matchs joués", 7],
+      ["Minutes jouées", 320],
+      ["Buts", 1],
+      ["Passes décisives", 5],
+      ["Grosses occasions créées", 5],
+      ["Occasions créées", 11],
+      ["Dribbles réussis", 16]
+    ]
+  },
+  "2022-23": {
+    "Total": [
+      ["Matchs joués", 31],
+      ["Minutes jouées", 833],
+      ["Buts", 2],
+      ["Passes décisives", 1],
+      ["Grosses occasions créées", 2],
+      ["Occasions créées", 12],
+      ["Dribbles réussis", 25]
+    ]
+  },
+  "2021-22": {
+    "Total": [
+      ["Matchs joués", 3],
+      ["Minutes jouées", 74],
+      ["Buts", 1],
+      ["Passes décisives", 0],
+      ["Grosses occasions créées", 0],
+      ["Occasions créées", 0],
+      ["Dribbles réussis", 2]
+    ]
+  },
+  "2021": {
+    "Total": [
+      ["Matchs joués", 11],
+      ["Minutes jouées", 566],
+      ["Buts", 3],
+      ["Passes décisives", 0],
+      ["Grosses occasions créées", 0],
+      ["Occasions créées", 1],
+      ["Dribbles réussis", 14]
     ]
   }
 };
 /* ============================================================ */
 
 const listeHtml = lignes => lignes.length
-  ? '<ul class="rang' + (lignes.some(l => l[2]) ? " gaa" : "") + '">' + lignes.map(([nom, v, note]) =>
-      "<li><span>" + nom + (note ? '<span class="sous">' + note + "</span>" : "") + '</span><span class="n">' + v + "</span></li>").join("") + "</ul>"
+  ? '<ul class="rang' + (lignes.some(l => l[2]) ? " gaa" : "") + '">' + lignes.map(([nom, v, note]) => ligne(nom, v, note)).join("") + "</ul>"
   : '<p class="empty">Pas encore de données.</p>';
 
 function remplirSaisons() {
@@ -576,7 +765,7 @@ function remplirSaisons() {
   const el = document.getElementById("l-saisons");
   el.innerHTML = noms.map((n, i) => {
     const cles = Object.keys(saisons[n]);
-    return '<details class="club"' + (i === 0 ? " open" : "") + ' data-saison="' + n + '"><summary><h3>Saison ' + n + "</h3></summary>" +
+    return '<details class="club" data-saison="' + n + '"><summary><h3>Saison ' + n + "</h3></summary>" +
       (cles.length > 1
         ? '<div class="sub">' + cles.map(c => '<button type="button" data-c="' + c + '">' + c + "</button>").join("") + "</div>"
         : "") + '<div class="pan"></div></details>';
