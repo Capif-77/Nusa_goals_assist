@@ -182,7 +182,8 @@ const buts = [
   { club: "Norvège", competition: "Coupe du monde", adversaire: "Côte d'Ivoire", date: "2026-06-30", minute: 39, pied: "droit", passeur: "Martin Ødegaard", xg: 0.02, xgot: 0.80, video: { id: "ATzmoebQMj0", debut: 18, fin: 34 } },
   { club: "RB Leipzig", competition: "Coupe d'Allemagne", adversaire: "Trier", date: "2026-08-22", minute: 92, pied: "droit", xg: 0.07, xgot: 0.66, video: { id: "BHiAezC73Eo", debut: 122, fin: 148 } },
   { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Gladbach", date: "2026-08-29", minute: 49, pied: "droit", passeur: "Tidiam Gomis", xg: 0.10, xgot: 0.62, video: { id: "hP0-xSX3ba8", debut: 58, fin: 80 } },
-  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2026-09-13", minute: 28, pied: "droit", xg: 0.09, xgot: 0.21, video: { id: "X_p818BPjZ8", debut: 38, fin: 64 } }
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2026-09-13", minute: 28, pied: "droit", xg: 0.09, xgot: 0.21, video: { id: "X_p818BPjZ8", debut: 38, fin: 64 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Francfort", date: "2026-10-10", minute: 54, pied: "droit", passeur: "Ezechiel Banzuzi", xg: 0.08, xgot: null, video: { id: "ybIR94NzEEI", debut: 483, fin: 550 } }
 ];
 
 const passes = [
@@ -213,7 +214,8 @@ const passes = [
   { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Francfort", date: "2026-04-18", minute: 81, pied: "droit", buteur: "Conrad Harder", xg: null, xgot: null, video: { id: "IKtWgQIGv98", debut: 43, fin: 56 } },
   { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2026-09-13", minute: 72, pied: "droit", buteur: "Willi Orbán", xg: null, xgot: null, video: { id: "X_p818BPjZ8", debut: 114, fin: 142 } },
   { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Hambourg", date: "2026-09-13", minute: 74, pied: "droit", buteur: "Christopher Nkunku", xg: null, xgot: null, video: { id: "X_p818BPjZ8", debut: 143, fin: 167 } },
-  { club: "Norvège", competition: "Ligue des nations", adversaire: "Danemark", date: "2026-09-24", minute: 18, pied: "droit", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "aGSyoI4qDco", debut: 113, fin: 179 } }
+  { club: "Norvège", competition: "Ligue des nations", adversaire: "Danemark", date: "2026-09-24", minute: 18, pied: "droit", buteur: "Erling Haaland", xg: null, xgot: null, video: { id: "aGSyoI4qDco", debut: 113, fin: 179 } },
+  { club: "RB Leipzig", competition: "Bundesliga", adversaire: "Francfort", date: "2026-10-10", minute: 5, pied: "droit", buteur: "Christopher Nkunku", xg: null, xgot: null, video: { id: "ybIR94NzEEI", debut: 120, fin: 200 } }
 ];
 /* ============================================================ */
 
@@ -306,32 +308,36 @@ remplir("l-passes", passes, true);
    ============================================================ */
 const statsComp = {
   "Championnat": [
-    ["Matchs joués", 133],
+    ["Matchs joués", 135],
     ["Minutes jouées", 6985],
-    ["Buts", 17],
-    ["Passes décisives", 13],
-    ["Grosses occasions créées", 28],
-    ["Occasions créées", 112],
-    ["Dribbles réussis", 222],
+    ["Buts", 18],
+    ["Passes décisives", 14],
+    ["Grosses occasions créées", 30],
+    ["Occasions créées", 117],
+    ["Dribbles réussis", 226],
     ["Grosses occasions manquées", 6],
-    ["Tacles", 105],
-    ["Interceptions", 36],
-    ["xG (depuis 2023-2024)", "10,47"],
-    ["xA (depuis 2023-2024)", "13,34"]
+    ["Tacles", 112],
+    ["Interceptions", 37],
+    ["xG (depuis 2023-2024)", "10,62"],
+    ["xA (depuis 2023-2024)", "14,32"]
   ],
   "Ligue des champions": [
-    ["Matchs joués", 13],
-    ["Minutes jouées", 564],
+    ["Matchs joués", 14],
+    ["Minutes jouées", 654],
     ["Buts", 1],
     ["Passes décisives", 0],
     ["Grosses occasions créées", 1],
-    ["Occasions créées", 14],
-    ["Dribbles réussis", 21],
-    ["Grosses occasions manquées", 3],
-    ["Tacles", 11],
-    ["Interceptions", 2],
-    ["xG", "1,31"],
-    ["xA", "1,41"]
+    ["Occasions créées", 15],
+    ["Dribbles réussis", 22],
+    ["Grosses occasions manquées", 4],
+    ["Tacles", 13],
+    ["Interceptions", 3],
+    ["Tirs", 17],
+    ["Tirs cadrés", 7],
+    ["% de tirs cadrés", "41,2 %"],
+    ["Centres réussis", "9 / 26"],
+    ["xG", "1,45"],
+    ["xA", "1,63"]
   ],
   "Coupe": [
     ["Matchs joués", 13],
@@ -394,8 +400,8 @@ const statsNat = {
   ],
   "Euro": [],
   "Ligue des nations": [
-    ["Matchs joués", 9],
-    ["Minutes jouées", 615],
+    ["Matchs joués", 10],
+    ["Minutes jouées", 689],
     ["Buts", 3],
     ["Passes décisives", 2],
     ["Grosses occasions créées", 4],
@@ -404,8 +410,8 @@ const statsNat = {
     ["Grosses occasions manquées", 1],
     ["Tacles", 4],
     ["Interceptions", 7],
-    ["xG (depuis 2026)", "0,11"],
-    ["xA (depuis 2026)", "0,89"]
+    ["xG (Ligue des nations 2026 uniquement)", "0,11"],
+    ["xA (Ligue des nations 2026 uniquement)", "0,89"]
   ],
   "Qualifs Coupe du monde": [
     ["Matchs joués", 6],
@@ -454,6 +460,8 @@ const DEFS = {
   "Tacles": "Actions défensives où le joueur va au contact d'un adversaire pour lui prendre le ballon.",
   "Interceptions": "Fois où le joueur coupe une passe adverse et récupère ou dévie le ballon.",
   "Récupérations": "Ballons récupérés par le joueur après une perte : ballon libre, passe ratée de l'adversaire, etc.",
+  "Décisif toutes les": "Nombre de minutes jouées en moyenne pour être décisif (marquer un but ou faire une passe décisive) : minutes jouées divisées par buts + passes décisives.",
+  "Dribbles réussis par 90 min": "Nombre moyen de dribbles réussis sur 90 minutes de jeu, soit la durée d'un match.",
   "Tirs cadrés": "Tirs qui vont dans le cadre : ils finissent au fond des filets ou sont arrêtés par le gardien.",
   "Duels gagnés": "Confrontations directes avec un adversaire pour le ballon (au sol ou dans les airs). Premier chiffre : duels gagnés, second : duels disputés.",
   "Fautes subies": "Fautes sifflées en faveur de son équipe parce qu'un adversaire a fait tomber ou gêné le joueur.",
@@ -487,7 +495,8 @@ const ORDRE = ["Matchs joués", "Minutes jouées", "Buts", "Passes décisives", 
 const nombre = v => typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
 
 /* Catégorie Total : somme de toutes les compétitions qui ont des données */
-function total(donnees) {
+function total(donnees, renom = {}) {
+  const aff = k => renom[k] || k;
   const comps = Object.keys(donnees).filter(k => donnees[k].length);
   const base = n => n.replace(/ \(.*\)$/, "");
   const lire = (k, nom) => { const l = donnees[k].find(x => base(x[0]) === nom); return l ? nombre(l[1]) : null; };
@@ -498,14 +507,14 @@ function total(donnees) {
     const manque = comps.filter(k => !ok.includes(k));
     const part = nom === "xG" || nom === "xA";
     const v = part ? String(Math.round(somme * 100) / 100).replace(".", ",") : somme;
-    const note = !manque.length ? "" : part ? "seulement : " + ok.join(", ") : "hors " + manque.join(", ");
+    const note = !manque.length ? "" : part ? "seulement : " + ok.map(aff).join(", ") : "hors " + manque.map(aff).join(", ");
     return [nom, v, note];
   }).filter(Boolean);
 }
 
 const blocsComp = [
   { cle: "club", titre: "Stats en club", donnees: { Total: total(statsComp), ...statsComp } },
-  { cle: "nat", titre: "Stats en sélection nationale", donnees: { Total: total(statsNat), ...statsNat } }
+  { cle: "nat", titre: "Stats en sélection nationale", donnees: { Total: total(statsNat, { "Ligue des nations": "Ligue des nations 2026" }), ...statsNat } }
 ];
 const choix = {};
 blocsComp.forEach(b => {
@@ -575,29 +584,33 @@ stats();
 const saisons = {
   "2026-27": {
     "Total": [
-      ["Matchs joués", 12],
-      ["Minutes jouées", 871],
+      ["Matchs joués", 16],
+      ["Minutes jouées", 1104],
       ["Buts", 4],
-      ["Passes décisives", 4],
-      ["Grosses occasions créées", 7],
-      ["Occasions créées", 20],
-      ["Dribbles réussis", 41],
+      ["Passes décisives", 7],
+      ["Décisif toutes les", "100'"],
+      ["Grosses occasions créées", 10],
+      ["Occasions créées", 27],
+      ["Dribbles réussis", 47],
+      ["Dribbles réussis par 90 min", "3,83"],
       ["Grosses occasions manquées", 2],
-      ["Tacles", 15],
+      ["Tacles", 19],
       ["Interceptions", 4],
-      ["Récupérations", 39],
-      ["Tirs", 28],
+      ["Récupérations", 44],
+      ["Tirs", 33],
       ["Tirs cadrés", 12],
-      ["Duels gagnés", "77 / 143"],
-      ["Fautes subies", 20],
-      ["Centres réussis", "8 / 26"],
-      ["Note Sofascore", "7,61"],
-      ["Note FotMob", "7,67"],
-      ["Homme du match (MOTM)", 2],
+      ["% de tirs cadrés", "36,4 %"],
+      ["Duels gagnés", "95 / 174"],
+      ["% de duels gagnés", "54,6 %"],
+      ["Fautes subies", 26],
+      ["Centres réussis", "9 / 28"],
+      ["Note Sofascore", "7,52"],
+      ["Note FotMob", "7,58"],
+      ["Homme du match (MOTM)", 3],
       ["Meilleur joueur de son équipe", 5],
       ["Joueur du mois (POTM)", 0],
-      ["xG", "1,56"],
-      ["xA", "3,38"]
+      ["xG", "1,74"],
+      ["xA", "4,11"]
     ],
     "Club": [
       ["Matchs joués", 6],
@@ -630,8 +643,8 @@ const saisons = {
       ["Grosses occasions manquées", 3],
       ["Tacles", 41],
       ["Interceptions", 17],
-      ["xG", "5,40", "seulement : Bundesliga et Coupe du monde"],
-      ["xA", "9,76", "seulement : Bundesliga et Coupe du monde"]
+      ["xG", "6,24"],
+      ["xA", "7,97"]
     ],
     "Club": [
       ["Matchs joués", 35],
@@ -644,8 +657,8 @@ const saisons = {
       ["Grosses occasions manquées", 3],
       ["Tacles", 29],
       ["Interceptions", 10],
-      ["xG", "5,16", "Bundesliga uniquement"],
-      ["xA", "9,57", "Bundesliga uniquement"]
+      ["xG", "5,31"],
+      ["xA", "5,54"]
     ],
     "Sélection": [
       ["Matchs joués", 15],
@@ -658,8 +671,8 @@ const saisons = {
       ["Grosses occasions manquées", 0],
       ["Tacles", 12],
       ["Interceptions", 7],
-      ["xG", "0,24", "Coupe du monde uniquement"],
-      ["xA", "0,19", "Coupe du monde uniquement"]
+      ["xG", "0,93"],
+      ["xA", "2,43"]
     ]
   },
   "2024-25": {
